@@ -1,51 +1,30 @@
 import pytest
+from flask import *
+from app.__init__ import app, db
+from app.migrations import User
 
-from app.__init__ import app
-# from flask import jsonify, request
-#
-# from pytest_flask.fixtures import mimetype
 
-class TestConf:
-    def setup(self):
-        app.testing = True
-        self.client = app.test_client()
+@pytest.fixture(scope="session")
+def test_client():
+    with app.test_client() as testing_client:
+        with app.app_context():
+            yield testing_client
 
-    def test_get_all_user(self):
-        response = self.client.get('/users')
-        assert response.status_code == 200
 
-    def test_get_current_user(self):
-        response = self.client.get('/users/2')
-        assert response.status_code == 200
+@pytest.fixture(scope="session")
+def create_user(test_client):
+    newUser = {
+        "name":"Quokaaa",
+        "email":"fast&furious@dominic.family"
+    }
 
-    def test_get_current_user_slash(self):
-        response = self.client.get('/users/2/')
-        assert response.status_code == 404
+    yield newUser
 
-    def test_post_create_user(self):
-        data = {
-            'name' : 'Dominic',
-            'email' : 'toretto@fast&furious.com',
-            'forfakesake' : 'jesuscriste'
-        }
-        response = self.client.post('/users', json=data)
-        assert response.status_code == 201
 
-        assert len(response.get_json()) == 3
+@pytest.fixture(scope="session")
+def update_user(test_client, create_user):
+    updateUser = create_user
+    updateUser['email'] = "changes@have.been.made"
+    updateUser['id'] = 33
 
-    def test_put_user(self):
-        data = {
-            'name': 'Joker',
-            'email': 'DC@universe.com'
-        }
-        response = self.client.put('/users/9', json=data)
-        assert response.status_code == 200
-
-        assert len(response.get_json()) == 3
-
-    def test_delete_user(self):
-        response = self.client.delete('/users/9')
-        assert response.status_code == 204
-
-    def teardown(self):
-        pass
+    yield updateUser
