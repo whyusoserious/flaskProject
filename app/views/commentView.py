@@ -48,7 +48,7 @@ class CommentRes(Resource):
         data = request.get_json()
 
         comment_to_update.idComment = idComment
-        comment_to_update.idUser = idUser
+        comment_to_update.id_user = idUser
         comment_to_update.idPost = idPost
         comment_to_update.user = data.get('user')
         comment_to_update.body = data.get('body')

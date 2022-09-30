@@ -49,7 +49,7 @@ class PostRes(Resource):
 
         data = request.get_json()
 
-        post_to_update.idUser = idUser
+        post_to_update.id_user = idUser
         post_to_update.idPost = idPost
         post_to_update.title = data.get('title')
         post_to_update.description = data.get('description')
